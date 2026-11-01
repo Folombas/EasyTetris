@@ -2,6 +2,7 @@ package com.folombas.easytetrisme.screens
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.ScreenAdapter
+import com.badlogic.gdx.audio.Sound
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Label
@@ -14,6 +15,7 @@ import ktx.actors.onClick
 class MainMenuScreen : ScreenAdapter() {
     private val stage = Stage(ScreenViewport())
     private val skin = Skin(Gdx.files.internal("ui/uiskin.json"))
+    private val clickSound: Sound = Gdx.audio.newSound(Gdx.files.internal("sounds/click.ogg"))
 
     init {
         val table = Table()
@@ -28,10 +30,17 @@ class MainMenuScreen : ScreenAdapter() {
         val quitButton = TextButton("Quit", skin)
 
         startButton.onClick {
+            clickSound.play()
             Gdx.app.log("Menu", "Start clicked!")
         }
 
+        collectionButton.onClick {
+            clickSound.play()
+            Gdx.app.log("Menu", "Collection clicked!")
+        }
+
         quitButton.onClick {
+            clickSound.play()
             Gdx.app.exit()
         }
 
@@ -57,5 +66,6 @@ class MainMenuScreen : ScreenAdapter() {
     override fun dispose() {
         stage.dispose()
         skin.dispose()
+        clickSound.dispose()
     }
 }
