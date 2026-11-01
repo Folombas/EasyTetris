@@ -3,7 +3,7 @@ buildscript {
         maven { url "https://mvn-mirror.gitverse.ru" }
     }
     dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.22"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:2.1.10"
     }
 }
 
@@ -22,7 +22,15 @@ allprojects {
         maven { url "https://mvn-mirror.gitverse.ru" }
     }
 
-    // ЖЕСТКО ЗАДАЕМ JAVA 17 ДЛЯ ВСЕХ МОДУЛЕЙ
+    // Принудительно используем Kotlin 2.1.10 для всех модулей
+    configurations.all {
+        resolutionStrategy {
+            force 'org.jetbrains.kotlin:kotlin-stdlib:2.1.10'
+            force 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.1.10'
+            force 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:2.1.10'
+        }
+    }
+
     tasks.withType(JavaCompile).configureEach {
         sourceCompatibility = '17'
         targetCompatibility = '17'
