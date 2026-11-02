@@ -5,6 +5,6 @@ import com.folombas.easytetrisme.screens.MainMenuScreen
 
 class TetrisGame : Game() {
     override fun create() {
-        setScreen(MainMenuScreen())
+        setScreen(MainMenuScreen(this))
     }
 }
