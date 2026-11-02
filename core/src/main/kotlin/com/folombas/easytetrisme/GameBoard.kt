@@ -11,13 +11,17 @@ class GameBoard {
     var currentY = 0
     var currentShape = Tetromino.I.shape
     var currentColor = Tetromino.I.color
+    var isGameOver = false
 
     fun spawnNew() {
         val randomType = Tetromino.values().random()
-        currentShape = randomType.shape
+        currentShape = randomType.shape.map { it.clone() }.toTypedArray()
         currentColor = randomType.color
         currentX = cols / 2 - currentShape[0].size / 2
         currentY = 0
+        if (!isValidMove(currentX, currentY, currentShape)) {
+            isGameOver = true
+        }
     }
 
     fun isValidMove(x: Int, y: Int, shape: Array<IntArray>): Boolean {
@@ -35,6 +39,7 @@ class GameBoard {
     }
 
     fun move(dx: Int, dy: Int): Boolean {
+        if (isGameOver) return false
         if (isValidMove(currentX + dx, currentY + dy, currentShape)) {
             currentX += dx
             currentY += dy
@@ -44,13 +49,22 @@ class GameBoard {
     }
 
     fun rotate() {
-        val rotated = Tetromino.values().first { it.shape === currentShape }.rotated()
+        if (isGameOver) return
+        val rows = currentShape.size
+        val cols = currentShape[0].size
+        val rotated = Array(cols) { IntArray(rows) }
+        for (r in 0 until rows) {
+            for (c in 0 until cols) {
+                rotated[c][rows - 1 - r] = currentShape[r][c]
+            }
+        }
         if (isValidMove(currentX, currentY, rotated)) {
             currentShape = rotated
         }
     }
 
     fun placePiece() {
+        if (isGameOver) return
         for (r in currentShape.indices) {
             for (c in currentShape[r].indices) {
                 if (currentShape[r][c] == 1) {
@@ -68,15 +82,10 @@ class GameBoard {
         for (r in rows - 1 downTo 0) {
             var full = true
             for (c in 0 until cols) {
-                if (grid[r][c] == null) {
-                    full = false
-                    break
-                }
+                if (grid[r][c] == null) { full = false; break }
             }
             if (full) {
-                for (row in r downTo 1) {
-                    grid[row] = grid[row - 1].clone()
-                }
+                for (row in r downTo 1) { grid[row] = grid[row - 1].clone() }
                 grid[0] = arrayOfNulls(cols)
             }
         }

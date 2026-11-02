@@ -10,16 +10,4 @@ enum class Tetromino(val shape: Array<IntArray>, val color: Color) {
     Z(arrayOf(intArrayOf(1, 1, 0), intArrayOf(0, 1, 1)), Color.RED),
     J(arrayOf(intArrayOf(1, 0, 0), intArrayOf(1, 1, 1)), Color.BLUE),
     L(arrayOf(intArrayOf(0, 0, 1), intArrayOf(1, 1, 1)), Color.ORANGE);
-
-    fun rotated(): Array<IntArray> {
-        val rows = shape.size
-        val cols = shape[0].size
-        val newShape = Array(cols) { IntArray(rows) }
-        for (r in 0 until rows) {
-            for (c in 0 until cols) {
-                newShape[c][rows - 1 - r] = shape[r][c]
-            }
-        }
-        return newShape
-    }
 }
