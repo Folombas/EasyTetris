@@ -1,8 +1,11 @@
 buildscript {
     repositories {
+        maven { url "https://repository.exoplatform.org" }
+        maven { url "https://mirrors.cloud.tencent.com/nexus/repository/maven-public/" }
         maven { url "https://mvn-mirror.gitverse.ru" }
     }
     dependencies {
+        classpath 'com.android.tools.build:gradle:8.2.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:2.1.10"
     }
 }
@@ -10,7 +13,6 @@ buildscript {
 allprojects {
     apply plugin: "eclipse"
     apply plugin: "idea"
-    apply plugin: "org.jetbrains.kotlin.jvm"
 
     version = '1.0.0'
     ext {
@@ -19,10 +21,11 @@ allprojects {
     }
 
     repositories {
+        maven { url "https://repository.exoplatform.org" }
+        maven { url "https://mirrors.cloud.tencent.com/nexus/repository/maven-public/" }
         maven { url "https://mvn-mirror.gitverse.ru" }
     }
 
-    // Принудительно используем Kotlin 2.1.10 для всех модулей
     configurations.all {
         resolutionStrategy {
             force 'org.jetbrains.kotlin:kotlin-stdlib:2.1.10'
