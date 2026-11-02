@@ -1,39 +1,35 @@
 buildscript {
     repositories {
-        maven { url "https://repository.exoplatform.org" }
         maven { url "https://mirrors.cloud.tencent.com/nexus/repository/maven-public/" }
         maven { url "https://mvn-mirror.gitverse.ru" }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:8.2.2'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:2.1.10"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.22"
     }
 }
 
 allprojects {
     apply plugin: "eclipse"
     apply plugin: "idea"
-
     version = '1.0.0'
     ext {
         appName = "EasyTetris"
         gdxVersion = '1.14.1'
+        lwjgl3Version = '3.3.3'
+        enableGraalNative = false
     }
-
     repositories {
-        maven { url "https://repository.exoplatform.org" }
         maven { url "https://mirrors.cloud.tencent.com/nexus/repository/maven-public/" }
         maven { url "https://mvn-mirror.gitverse.ru" }
     }
-
     configurations.all {
         resolutionStrategy {
-            force 'org.jetbrains.kotlin:kotlin-stdlib:2.1.10'
-            force 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.1.10'
-            force 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:2.1.10'
+            force 'org.jetbrains.kotlin:kotlin-stdlib:1.9.22'
+            force 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.22'
+            force 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.9.22'
         }
     }
-
     tasks.withType(JavaCompile).configureEach {
         sourceCompatibility = '17'
         targetCompatibility = '17'

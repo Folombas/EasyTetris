@@ -4,13 +4,16 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.ScreenAdapter
 import com.badlogic.gdx.audio.Sound
 import com.badlogic.gdx.graphics.GL20
+import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.Stage
+import com.badlogic.gdx.scenes.scene2d.actions.Actions.*
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
+import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.viewport.ScreenViewport
-import ktx.actors.onClick
 
 class MainMenuScreen : ScreenAdapter() {
     private val stage = Stage(ScreenViewport())
@@ -23,37 +26,49 @@ class MainMenuScreen : ScreenAdapter() {
         stage.addActor(table)
 
         val titleLabel = Label("EASY TETRIS", skin)
-        titleLabel.setFontScale(2f)
+        titleLabel.setFontScale(2.5f)
+        titleLabel.setAlignment(Align.center)
 
         val startButton = TextButton("Start Game", skin)
         val collectionButton = TextButton("Collection", skin)
         val quitButton = TextButton("Quit", skin)
 
-        startButton.onClick {
-            clickSound.play()
-            Gdx.app.log("Menu", "Start clicked!")
+        listOf(startButton, collectionButton, quitButton).forEach { button ->
+            button.setTransform(true)
+            button.setOrigin(Align.center)
+            button.color.a = 0f
+            button.addAction(fadeIn(0.5f))
         }
 
-        collectionButton.onClick {
-            clickSound.play()
-            Gdx.app.log("Menu", "Collection clicked!")
+        fun animateClick(button: TextButton, action: () -> Unit) {
+            button.addListener(object : ClickListener() {
+                override fun clicked(event: InputEvent?, x: Float, y: Float) {
+                    clickSound.play()
+                    button.clearActions()
+                    button.addAction(sequence(
+                        scaleTo(0.9f, 0.9f, 0.05f),
+                        scaleTo(1f, 1f, 0.05f),
+                        delay(0.1f),
+                        com.badlogic.gdx.scenes.scene2d.actions.Actions.run { action() }
+                    ))
+                }
+            })
         }
 
-        quitButton.onClick {
-            clickSound.play()
-            Gdx.app.exit()
-        }
+        animateClick(startButton) { Gdx.app.log("Menu", "Start clicked!") }
+        animateClick(collectionButton) { Gdx.app.log("Menu", "Collection clicked!") }
+        animateClick(quitButton) { Gdx.app.exit() }
 
-        table.add(titleLabel).padBottom(50f).row()
-        table.add(startButton).width(200f).pad(10f).row()
-        table.add(collectionButton).width(200f).pad(10f).row()
-        table.add(quitButton).width(200f).pad(10f)
+        table.add(titleLabel).padBottom(60f).row()
+        table.add(startButton).width(250f).height(60f).pad(10f).row()
+        table.add(collectionButton).width(250f).height(60f).pad(10f).row()
+        table.add(quitButton).width(250f).height(60f).pad(10f)
 
         Gdx.input.inputProcessor = stage
     }
 
     override fun render(delta: Float) {
-        Gdx.gl.glClearColor(0.1f, 0.1f, 0.15f, 1f)
+        Gdx.gl.glClearColor(0.05f, 0.05f, 0.1f, 1f)
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
         stage.act(delta)
         stage.draw()

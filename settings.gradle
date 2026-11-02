@@ -1,6 +1,5 @@
 pluginManagement {
     repositories {
-        maven { url "https://repository.exoplatform.org" }
         maven { url "https://mirrors.cloud.tencent.com/nexus/repository/maven-public/" }
         maven { url "https://mvn-mirror.gitverse.ru" }
         gradlePluginPortal()
@@ -9,10 +8,9 @@ pluginManagement {
 
 dependencyResolutionManagement {
     repositories {
-        maven { url "https://repository.exoplatform.org" }
         maven { url "https://mirrors.cloud.tencent.com/nexus/repository/maven-public/" }
         maven { url "https://mvn-mirror.gitverse.ru" }
     }
 }
 
-include 'core', 'lwjgl3', 'android'
+include 'core', 'android'

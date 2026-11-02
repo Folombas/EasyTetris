@@ -8,9 +8,4 @@ sourceSets.main.java.srcDirs = [ "src/main/java/", "src/main/kotlin/" ]
 
 dependencies {
     api "com.badlogicgames.gdx:gdx:$gdxVersion"
-    api "io.github.libktx:ktx-app:1.13.1-rc1"
-    api "io.github.libktx:ktx-graphics:1.13.1-rc1"
-    api "io.github.libktx:ktx-scene2d:1.13.1-rc1"
-    api "io.github.libktx:ktx-actors:1.13.1-rc1"
-    api "org.jetbrains.kotlin:kotlin-stdlib:2.1.10"
 }
