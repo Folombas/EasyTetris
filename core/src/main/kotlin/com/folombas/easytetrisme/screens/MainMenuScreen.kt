@@ -19,7 +19,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.viewport.FitViewport
-import com.folombas.easytetrisme.GameSettings
+import com.folombas.easytetrisme.PlayerData
 
 class MainMenuScreen(private val game: com.badlogic.gdx.Game) : ScreenAdapter() {
     private val stage = Stage(FitViewport(480f, 800f))
@@ -27,24 +27,23 @@ class MainMenuScreen(private val game: com.badlogic.gdx.Game) : ScreenAdapter() 
     private lateinit var font: BitmapFont
 
     init {
-        generateFont()
+        val generator = FreeTypeFontGenerator(Gdx.files.internal("fonts/Montserrat-Bold.ttf"))
+        val parameter = FreeTypeFontGenerator.FreeTypeFontParameter()
+        parameter.characters = FreeTypeFontGenerator.DEFAULT_CHARS + "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюя"
+        parameter.size = 48
+        font = generator.generateFont(parameter)
+        generator.dispose()
+
         val table = Table().apply { setFillParent(true) }
         stage.addActor(table)
+        val titleLabel = Label("ТЕТРИС", Label.LabelStyle(font, if (PlayerData.isDarkTheme) Color.CYAN else Color.BLUE)).apply { setFontScale(2.5f); setAlignment(Align.center) }
 
-        val titleColor = if (GameSettings.isDarkTheme) Color.CYAN else Color(0.1f, 0.4f, 0.8f, 1f)
-        val titleLabel = Label("ТЕТРИС", Label.LabelStyle(font, titleColor)).apply {
-            setFontScale(2.5f)
-            setAlignment(Align.center)
-        }
+        val startBtn = TextButton("ИГРАТЬ", createModernStyle(if (PlayerData.isDarkTheme) Color(0.2f, 0.7f, 0.3f, 1f) else Color(0.1f, 0.6f, 0.2f, 1f)))
+        val achBtn = TextButton("ДОСТИЖЕНИЯ", createModernStyle(if (PlayerData.isDarkTheme) Color(0.9f, 0.6f, 0.1f, 1f) else Color(0.8f, 0.5f, 0.0f, 1f)))
+        val setBtn = TextButton("НАСТРОЙКИ", createModernStyle(if (PlayerData.isDarkTheme) Color(0.2f, 0.4f, 0.8f, 1f) else Color(0.1f, 0.3f, 0.7f, 1f)))
+        val quitBtn = TextButton("ВЫХОД", createModernStyle(if (PlayerData.isDarkTheme) Color(0.8f, 0.2f, 0.2f, 1f) else Color(0.7f, 0.1f, 0.1f, 1f)))
 
-        val startButton = TextButton("ИГРАТЬ", createModernStyle(if (GameSettings.isDarkTheme) Color(0.2f, 0.7f, 0.3f, 1f) else Color(0.1f, 0.6f, 0.2f, 1f)))
-        val settingsButton = TextButton("НАСТРОЙКИ", createModernStyle(if (GameSettings.isDarkTheme) Color(0.2f, 0.4f, 0.8f, 1f) else Color(0.1f, 0.3f, 0.7f, 1f)))
-        val quitButton = TextButton("ВЫХОД", createModernStyle(if (GameSettings.isDarkTheme) Color(0.8f, 0.2f, 0.2f, 1f) else Color(0.7f, 0.1f, 0.1f, 1f)))
-
-        listOf(startButton, settingsButton, quitButton).forEach {
-            it.color.a = 0f
-            it.addAction(fadeIn(0.8f))
-        }
+        listOf(startBtn, achBtn, setBtn, quitBtn).forEach { it.color.a = 0f; it.addAction(fadeIn(0.8f)) }
 
         fun bindClick(button: TextButton, action: () -> Unit) {
             button.addListener(object : ClickListener() {
@@ -56,50 +55,29 @@ class MainMenuScreen(private val game: com.badlogic.gdx.Game) : ScreenAdapter() 
             })
         }
 
-        bindClick(startButton) { game.screen = GameScreen(game) }
-        bindClick(settingsButton) { game.screen = SettingsScreen(game) }
-        bindClick(quitButton) { Gdx.app.exit() }
+        bindClick(startBtn) { game.screen = GameScreen(game) }
+        bindClick(achBtn) { game.screen = AchievementsScreen(game) }
+        bindClick(setBtn) { game.screen = SettingsScreen(game) }
+        bindClick(quitBtn) { Gdx.app.exit() }
 
-        table.add(titleLabel).padBottom(100f).row()
-        table.add(startButton).width(320f).height(80f).pad(15f).row()
-        table.add(settingsButton).width(320f).height(80f).pad(15f).row()
-        table.add(quitButton).width(320f).height(80f).pad(15f)
-
+        table.add(titleLabel).padBottom(60f).row()
+        table.add(startBtn).width(320f).height(70f).pad(10f).row()
+        table.add(achBtn).width(320f).height(70f).pad(10f).row()
+        table.add(setBtn).width(320f).height(70f).pad(10f).row()
+        table.add(quitBtn).width(320f).height(70f).pad(10f)
         Gdx.input.inputProcessor = stage
-    }
-
-    private fun generateFont() {
-        val generator = FreeTypeFontGenerator(Gdx.files.internal("fonts/Montserrat-Bold.ttf"))
-        val parameter = FreeTypeFontGenerator.FreeTypeFontParameter()
-        parameter.size = 48
-        parameter.characters = FreeTypeFontGenerator.DEFAULT_CHARS + "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюя"
-        font = generator.generateFont(parameter)
-        generator.dispose()
     }
 
     private fun createModernStyle(color: Color): TextButton.TextButtonStyle {
         val pixmap = Pixmap(256, 80, Pixmap.Format.RGBA8888)
-        pixmap.setColor(color)
-        pixmap.fillRectangle(20, 0, 216, 80)
-        pixmap.fillCircle(20, 40, 40)
-        pixmap.fillCircle(236, 40, 40)
-        return TextButton.TextButtonStyle().apply {
-            up = TextureRegionDrawable(Texture(pixmap))
-            font = this@MainMenuScreen.font
-            fontColor = Color.WHITE
-        }
+        pixmap.setColor(color); pixmap.fillRectangle(20, 0, 216, 80); pixmap.fillCircle(20, 40, 40); pixmap.fillCircle(236, 40, 40)
+        return TextButton.TextButtonStyle().apply { up = TextureRegionDrawable(Texture(pixmap)); font = this@MainMenuScreen.font; fontColor = Color.WHITE }
     }
 
     override fun render(delta: Float) {
-        Gdx.gl.glClearColor(
-            if (GameSettings.isDarkTheme) 0.08f else 0.9f,
-            if (GameSettings.isDarkTheme) 0.08f else 0.9f,
-            if (GameSettings.isDarkTheme) 0.12f else 0.95f,
-            1f
-        )
+        Gdx.gl.glClearColor(if (PlayerData.isDarkTheme) 0.08f else 0.9f, if (PlayerData.isDarkTheme) 0.08f else 0.9f, if (PlayerData.isDarkTheme) 0.12f else 0.95f, 1f)
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
-        stage.act(delta)
-        stage.draw()
+        stage.act(delta); stage.draw()
     }
     override fun resize(width: Int, height: Int) { stage.viewport.update(width, height, true) }
     override fun dispose() { stage.dispose(); font.dispose(); clickSound.dispose() }
